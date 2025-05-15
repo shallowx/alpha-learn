@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: ALPHA-LEARN
+  output:
+    ansi:
+      enabled: always
