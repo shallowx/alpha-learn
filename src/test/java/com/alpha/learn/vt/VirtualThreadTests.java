@@ -2,8 +2,6 @@ package com.alpha.learn.vt;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.ThreadFactory;
-
 public class VirtualThreadTests {
 
 
