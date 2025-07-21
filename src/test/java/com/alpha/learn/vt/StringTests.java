@@ -1,0 +1,34 @@
+package com.alpha.learn.vt;
+
+import org.junit.jupiter.api.Test;
+
+public class StringTests {
+
+    @Test
+    public void test() {
+        String a = "hello";
+        String b = "he" + "llo";
+        String c = new String("hello");
+
+        System.out.println(a == b);
+        System.out.println(a == c);
+        System.out.println(a.equals(c));
+    }
+
+    @Test
+    public void testReverse() {
+        String s = "hello";
+        System.out.println(new String(reverse(s.toCharArray())));
+    }
+
+    public static char[] reverse(char[] s) {
+        int n = s.length;
+        for (int left = 0, right = n - 1; left < right; ++left, --right) {
+            char tmp = s[left];
+            s[left] = s[right];
+            s[right] = tmp;
+        }
+
+        return s;
+    }
+}
