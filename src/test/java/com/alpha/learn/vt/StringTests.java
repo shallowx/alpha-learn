@@ -21,7 +21,7 @@ public class StringTests {
         System.out.println(new String(reverse(s.toCharArray())));
     }
 
-    public static char[] reverse(char[] s) {
+    private char[] reverse(char[] s) {
         int n = s.length;
         for (int left = 0, right = n - 1; left < right; ++left, --right) {
             char tmp = s[left];
@@ -30,5 +30,18 @@ public class StringTests {
         }
 
         return s;
+    }
+
+    @Test
+    public void testExchange() {
+        exchange(2,4);
+    }
+
+    private void exchange(int a, int b) {
+        a = a ^ b ;
+        b = a ^ b ;
+        a = a ^ b ;
+
+        System.out.println("a:" + a + " b:" + b);
     }
 }
