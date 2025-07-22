@@ -35,12 +35,21 @@ public class StringTests {
     @Test
     public void testExchange() {
         exchange(2,4);
+        exchange0(5,4);
     }
 
     private void exchange(int a, int b) {
         a = a ^ b ;
         b = a ^ b ;
         a = a ^ b ;
+
+        System.out.println("a:" + a + " b:" + b);
+    }
+
+    private void exchange0(int a, int b) {
+        a = a + b ;
+        b = a - b ;
+        a = a - b ;
 
         System.out.println("a:" + a + " b:" + b);
     }
