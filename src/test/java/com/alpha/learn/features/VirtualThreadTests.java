@@ -42,6 +42,18 @@ public class VirtualThreadTests {
         }
     }
 
+    @Test
+    public void test1() throws ExecutionException, InterruptedException {
+        ThreadFactory factory = r -> Thread.ofVirtual().unstarted(r);
+
+        try (ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(factory)) {
+            ScheduledFuture<?> future = scheduledExecutorService.schedule(new TestTask(Thread.currentThread().getName(), ThreadLocalRandom.current().nextInt(0, 2)), 2, TimeUnit.SECONDS);
+            log.info("future is done: {}", future.isDone());
+            log.info("future is canceled: {}", future.isCancelled());
+            log.info("future outcome is: {}", future.get());
+        }
+    }
+
     record TestTask(String name, int id) implements Runnable {
         @Override
         public void run() {
