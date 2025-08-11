@@ -2,9 +2,7 @@ package com.alpha.learn.jdk;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 public class ObjectTests {
@@ -60,7 +58,7 @@ public class ObjectTests {
             } catch (InterruptedException ignore) {}
 
             synchronized (OBJECT_TESTS) {
-                OBJECT_TESTS.notify();
+                OBJECT_TESTS.notifyAll();
                 log.info("notify");
             }
         });
