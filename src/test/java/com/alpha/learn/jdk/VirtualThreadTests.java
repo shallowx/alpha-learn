@@ -1,4 +1,4 @@
-package com.alpha.learn.strings;
+package com.alpha.learn.jdk;
 
 import org.junit.jupiter.api.Test;
 
