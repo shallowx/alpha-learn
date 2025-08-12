@@ -1,8 +1,15 @@
 package com.alpha.learn.jdk;
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("ALL")
 @Slf4j
@@ -71,6 +78,62 @@ public class ObjectTests {
 
         t1.join();
         t2.join();
+    }
+
+    private static final Object LOCK = new Object();
+    private static boolean numberTurn = true;
+
+    @Test
+    public void testPrint() throws InterruptedException {
+        List<Integer> numbers = Lists.newArrayList();
+        Thread t1 = new Thread(() -> {
+            for(;;) {
+                synchronized (LOCK) {
+                    while (!numberTurn) {
+                        try {
+                            LOCK.wait();
+                        } catch (InterruptedException ignore) {}
+                    }
+
+                    log.info("1");
+                    numbers.addLast(1);
+                    numberTurn = false;
+                    LOCK.notifyAll();
+                }
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            for (;;) {
+                synchronized (LOCK) {
+                    while (numberTurn) {
+                        try {
+                            LOCK.wait();
+                        } catch (InterruptedException ignore) {}
+                    }
+                    log.info("2");
+                    numbers.addLast(2);
+                    numberTurn = true;
+                    LOCK.notifyAll();
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
+
+        TimeUnit.SECONDS.sleep(2);
+
+        boolean compare = false;
+        for (int i = 0; i < numbers.size(); i++) {
+            int index = i;
+            if ((index & 1) == 1 && numbers.get(i) != 2) {
+                compare = true;
+            } else if ((index & 1) == 0 && numbers.get(i) != 1) {
+                compare = true;
+            }
+        }
+        log.info("----------- compare: {} ------------", compare);
     }
 
     private static boolean conditionForSpuriousingWakeup = false;

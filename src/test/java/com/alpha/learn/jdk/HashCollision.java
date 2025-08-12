@@ -1,4 +1,4 @@
-package com.alpha.learn.algo;
+package com.alpha.learn.jdk;
 
 import java.io.IOException;
 import java.io.InputStream;
