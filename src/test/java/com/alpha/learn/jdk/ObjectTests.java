@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import java.util.concurrent.CountDownLatch;
 
+@SuppressWarnings("ALL")
 @Slf4j
 public class ObjectTests {
 
@@ -14,6 +15,11 @@ public class ObjectTests {
         ObjectTests obj = new ObjectTests();
         Class<? extends ObjectTests> clz = obj.getClass();
         log.info("getClass: {}, simple name: {}, type name: {}, name: {}", clz, clz.getSimpleName(), clz.getTypeName(), clz.getName());
+
+        ObjectTests obj1 = new ObjectTests();
+        Class<? extends ObjectTests> clz1 = obj1.getClass();
+        // The returned Class object is the object that is locked by static synchronized methods of the represented class.
+        log.info("the one class is equals to other one: {}", clz1.equals(clz));
     }
 
     @Test
@@ -21,7 +27,7 @@ public class ObjectTests {
         ObjectTests obj = new ObjectTests();
         int hashCode = obj.hashCode();
         log.info("hashcode == : {}", System.identityHashCode(obj) == hashCode);
-        log.info("hashcode: {}", System.identityHashCode(obj));
+        log.info("identityHashCode: {}, override hashcode: {}", System.identityHashCode(obj), hashCode);
     }
 
     @Test
@@ -65,5 +71,66 @@ public class ObjectTests {
 
         t1.join();
         t2.join();
+    }
+
+    private static boolean conditionForSpuriousingWakeup = false;
+    @Test
+    public void testSpurioueWakeup() throws InterruptedException {
+        Thread waiter = new Thread(() -> {
+            synchronized (OBJECT_TESTS) {
+                System.out.println("[Waiter] Waiting for condition...");
+                try {
+                    while (!conditionForSpuriousingWakeup) {
+                        OBJECT_TESTS.wait();
+                    }
+                    System.out.println("[Waiter] Condition is true, continue work!");
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+
+        waiter.start();
+        Thread.sleep(1000);
+
+        // spurious wakeup
+        synchronized (OBJECT_TESTS) {
+            System.out.println("[Main] Fake notify without changing condition");
+            OBJECT_TESTS.notify();
+        }
+        Thread.sleep(1000);
+
+        // real wakeup
+        synchronized (OBJECT_TESTS) {
+            conditionForSpuriousingWakeup = true;
+            System.out.println("[Main] Set condition = true and notify");
+            OBJECT_TESTS.notify();
+        }
+    }
+
+    @Test
+    public void testClone() throws CloneNotSupportedException {
+        ObjectTests obj = new ObjectTests();
+        Object clone = obj.clone();
+        log.info("clone: {}, original object: {}", clone, obj);
+        log.info("clone == : {}", clone == obj);
+        log.info("clone is equals: {}", clone.equals(obj));
+        log.info("clone calss: {}, original class: {}", clone.getClass(), obj.getClass());
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return new ObjectTests();
+    }
+
+    private static final String TEST_HAHSCODE_VALUE = "TEST_HAHSCODE_VALUE";
+    @Override
+    public int hashCode() {
+        return TEST_HAHSCODE_VALUE.hashCode() * 31;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return TEST_HAHSCODE_VALUE.equals(this.TEST_HAHSCODE_VALUE);
     }
 }
