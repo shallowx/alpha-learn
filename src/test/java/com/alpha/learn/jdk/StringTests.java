@@ -10,6 +10,16 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
+/**
+ * <p>use Unicode represent String, so every character has only Unicode value.
+ * Unicode can represent all characters in the world, including emoticons</p>
+ *
+ * ASCII
+ * <p>standard characters set(ASCII 7bit): https://www.ascii-code.com/ASCII, and value range is [0, 127], the real length is 128</p>
+ * <p>ASCII 8bit: https://www.ascii-code.com/, and value range is [0, 255], the real length is 256</p>
+ *
+ * <p>benign data race about hashcode cache</p>
+ */
 @Slf4j
 @SuppressWarnings("ALL")
 public class StringTests {
@@ -43,6 +53,29 @@ public class StringTests {
         return minLen == Integer.MAX_VALUE ? "" : s.substring(start, start + minLen);
     }
 
+    /**
+     * public static void main(java.lang.String[]);
+     *     Code:
+     *          0: ldc           #26                 // String hello
+     *          2: astore_1
+     *          3: iconst_0
+     *          4: istore_2
+     *          5: iload_2
+     *          6: bipush        10
+     *          8: if_icmpge     24
+     *         11: aload_1
+     *         12: invokedynamic #28,  0             // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     *         17: astore_1
+     *         18: iinc          2, 1
+     *         21: goto          5
+     *         24: return
+     */
+    public static void main(String[] args) {
+        String s = "hello";
+        s += "world";
+        s += "world";
+    }
+
     @Test
     public void test() {
         String a = "hello";
@@ -61,6 +94,7 @@ public class StringTests {
         System.out.println(new String(reverse2(s.toCharArray())));
     }
 
+    // 😊🌍
     @Test
     public void testReverseUnicode() {
         String s = "你好😊World🌍";
@@ -276,6 +310,18 @@ public class StringTests {
         log.info("sb: {}", sb.toString());
         log.info("regionMatches: {}", b.regionMatches( true,0, upperCase, 0, upperCase.length()));
         log.info("offsetCodePoint: {}", upperCase.offsetByCodePoints(1, 2));
+    }
+
+    @Test
+    public void testIntern() {
+        String s =  new String("hello");
+        String t = "hello";
+        String intern = s.intern();
+
+        log.info("==: {}", s == t);
+        log.info("==: {}", s == intern);
+        log.info("==: {}", t == intern);
+        log.info("s: {}, t: {}, intern: {}", System.identityHashCode(s), System.identityHashCode(t), System.identityHashCode(intern));
     }
 
     private void exchange(int a, int b) {

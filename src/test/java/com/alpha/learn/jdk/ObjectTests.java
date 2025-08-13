@@ -4,13 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * <p>
+ * Why are the thread communication methods wait(), notify(), and notifyAll() defined in the Object class, rather than in the Thread class?
+ * Why must wait(), notify(), and notifyAll() be called within a synchronized method or synchronized block?
+ * What are the difference between the wait() method and the sleep() method ?
+ * Why is it usually necessary to also override the hashCode() method when overriding the equals() method?
+ * </p>
+ */
 @SuppressWarnings("ALL")
 @Slf4j
 public class ObjectTests {
@@ -195,5 +201,37 @@ public class ObjectTests {
     @Override
     public boolean equals(Object obj) {
         return TEST_HAHSCODE_VALUE.equals(this.TEST_HAHSCODE_VALUE);
+    }
+
+    @Test
+    public void testOverride() {
+        TestObject t1 = new TestObject("test", 1);
+        TestObject t2 = new TestObject("test", 2);
+        log.info("t1 == t2: {}", t1 == t2);
+        log.info("t1.equals(t2): {}", t1.equals(t2));
+        log.info("t1.hashCode():{}, t2.hashCode(): {}", t1.hashCode(), t2.hashCode());
+    }
+
+    class TestObject {
+        private String name;
+        private int id;
+
+        public TestObject(String name, int id) {
+            this.name = name;
+            this.id = id;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            TestObject test = (TestObject) o;
+            return Objects.equals(name, test.name);
+        }
+
+        // not must, according to the difference business decide if override nor not
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
     }
 }
