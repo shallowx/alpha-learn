@@ -8,7 +8,6 @@ import java.util.stream.IntStream;
 
 public class VirtualThreadTests {
 
-
     @Test
     public void test0() {
         Thread.Builder.OfVirtual vt = Thread.ofVirtual().name("test0");

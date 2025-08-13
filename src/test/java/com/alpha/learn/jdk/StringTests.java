@@ -1,9 +1,7 @@
 package com.alpha.learn.jdk;
 
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.util.Strings;
 import org.junit.jupiter.api.Test;
-
 import java.lang.constant.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -15,6 +13,35 @@ import java.util.stream.IntStream;
 @Slf4j
 @SuppressWarnings("ALL")
 public class StringTests {
+
+    private String minWindow(String s, String t) {
+        if ((s == null || s.length() == 0) || (t == null || t.length() == 0) || s.length() < t.length()) {
+            return "";
+        }
+        int[] container = new int[256];
+        for(int i = 0; i < t.length(); i++) {
+            container[t.charAt(i)]--;
+        }
+        int start = 0, minLen = Integer.MAX_VALUE, count = t.length();
+        for(int l  = 0, r = 0; r < s.length(); r++) {
+            if(container[s.charAt(r)]++ < 0) {
+                count--;
+            }
+
+            if (count == 0) {
+                while(container[s.charAt(l)] > 0) {
+                    container[s.charAt(l)]--;
+                    l++;
+                }
+
+                if (r - l + 1 < minLen) {
+                    minLen = r - l + 1;
+                    start = l;
+                }
+            }
+        }
+        return minLen == Integer.MAX_VALUE ? "" : s.substring(start, start + minLen);
+    }
 
     @Test
     public void test() {
