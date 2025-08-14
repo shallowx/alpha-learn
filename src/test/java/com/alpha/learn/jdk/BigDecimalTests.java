@@ -17,6 +17,10 @@ public class BigDecimalTests {
     public void testBigDecimal() {
         BigDecimal bigDecimal1 = new BigDecimal("3.14159265358979", MathContext.UNLIMITED).setScale(3,  RoundingMode.DOWN);
         log.info("bigDecimal1 = {}", bigDecimal1);
+
+        BigDecimal bigDecimal2 = new BigDecimal("10");
+        BigDecimal bigDecimal3 = new BigDecimal("3");
+        log.info("= {}", bigDecimal2.divide(bigDecimal3,  MathContext.DECIMAL64));
     }
 
     @Test
