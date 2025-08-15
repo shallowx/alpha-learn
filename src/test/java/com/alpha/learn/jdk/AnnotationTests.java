@@ -10,6 +10,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Objects;
 
+@SuppressWarnings("ALL")
 @Slf4j
 public class AnnotationTests {
 

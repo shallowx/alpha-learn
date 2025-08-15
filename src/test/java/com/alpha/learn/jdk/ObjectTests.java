@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
+import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -210,6 +212,21 @@ public class ObjectTests {
         log.info("t1 == t2: {}", t1 == t2);
         log.info("t1.equals(t2): {}", t1.equals(t2));
         log.info("t1.hashCode():{}, t2.hashCode(): {}", t1.hashCode(), t2.hashCode());
+    }
+
+    @Test
+    public void testInnerClass() {
+        Arena arena = global();
+        MemorySegment segment = arena.allocate(10 * 4);
+        log.info("arena = {}", arena);
+        log.info("segment = {}", segment);
+    }
+
+    Arena global() {
+        class Holder {
+            static final Arena GLOBAL = Arena.global();
+        }
+        return Holder.GLOBAL;
     }
 
     class TestObject {

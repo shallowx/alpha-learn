@@ -1,8 +1,10 @@
 package com.alpha.learn.jdk;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -105,9 +107,11 @@ public class NonSynchronizedListTest {
         list.add("a");
         list.add("b");
 
-        log.info("Before trim, capacity: {}", capacity(list));
-        list.trimToSize();
-        log.info("After trim, capacity: {}", capacity(list));
+        Assertions.assertThrows(InaccessibleObjectException.class ,() -> {
+            log.info("Before trim, capacity: {}", capacity(list));
+            list.trimToSize();
+            log.info("After trim, capacity: {}", capacity(list));
+        });
     }
 
     private static int capacity(ArrayList<?> list) throws Exception {
