@@ -91,5 +91,11 @@ public class IntegerTests {
         log.info("outcome: {}", 4 & 0x1);
         log.info("outcome: {}", 4 | 2);
         log.info("outcome: {}", 3 ^ 2);
+        log.info("outcome: {}", 5 >> 1);
+        log.info("outcome: {}", (double)5 / 2);
+        log.info("outcome: {}", 5 / (double)2);
+        log.info("outcome: {}", ((double)5 / 2));
+        log.info("outcome: {}", Double.valueOf(5) / 2);
+        log.info("outcome: {}", Float.valueOf(5) / 2);
     }
 }
