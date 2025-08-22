@@ -21,6 +21,7 @@ public class ThreadPoolTests {
                 for (int i = 0; i < 10; i++) {
                     log.info("pool running...");
                     try {
+                        Thread.onSpinWait();
                         countDownLatch.await();
                     } catch (InterruptedException ignore) {}
                 }
@@ -66,8 +67,8 @@ public class ThreadPoolTests {
     static class  ScheduledThreadFactoryTest implements ThreadFactory {
         private static final AtomicIntegerFieldUpdater<ScheduledThreadFactoryTest> THREAD_NUMBER_UPDATER = AtomicIntegerFieldUpdater.newUpdater(ScheduledThreadFactoryTest.class, "threadNumber");
         private final ThreadGroup group;
-        private final String namePrefix;
         private static final AtomicInteger POOL_NUMBER = new AtomicInteger(0);
+        private final String namePrefix;
         private volatile int threadNumber;
         private final boolean isVirtual;
 

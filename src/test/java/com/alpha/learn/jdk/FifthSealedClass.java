@@ -1,4 +1,4 @@
-package com.alpha.learn.features;
+package com.alpha.learn.jdk;
 
 public non-sealed class FifthSealedClass extends FourthSealedClass {
     @Override

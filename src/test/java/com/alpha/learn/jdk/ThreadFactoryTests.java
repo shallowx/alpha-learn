@@ -3,6 +3,11 @@ package com.alpha.learn.jdk;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.invoke.VarHandle;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -35,10 +40,10 @@ public class ThreadFactoryTests {
     }
 
     static class ThreadFactoryTest implements ThreadFactory {
-        private static final AtomicIntegerFieldUpdater<ThreadFactoryTest> THREAD_NUMBER_UPDATER = AtomicIntegerFieldUpdater.newUpdater(ThreadFactoryTest.class, "threadNumber");
+        private static final VarHandle THREAD_NUMBER_UPDATER = MhUtil.findVarHandle(MethodHandles.lookup(), "threadNumber", int.class);
+        private static final AtomicInteger POOL_NUMBER = new AtomicInteger(0);
         private final ThreadGroup group;
         private final String namePrefix;
-        private static final AtomicInteger POOL_NUMBER = new AtomicInteger(0);
         private volatile int threadNumber;
         private final boolean isVirtual;
 
@@ -50,7 +55,7 @@ public class ThreadFactoryTests {
 
         @Override
         public Thread newThread(@NonNull Runnable r) {
-            String name = namePrefix + THREAD_NUMBER_UPDATER.getAndIncrement(this);
+            String name = namePrefix + THREAD_NUMBER_UPDATER.compareAndSet(this, 1);
             Thread t;
             if (isVirtual) {
                 t = Thread.ofVirtual().name(name).unstarted(r);
@@ -64,6 +69,39 @@ public class ThreadFactoryTests {
                 }
             }
             return t;
+        }
+    }
+
+    static class MhUtil {
+
+        private MhUtil() {}
+
+        public static VarHandle findVarHandle(MethodHandles.Lookup lookup,
+                                              String name,
+                                              Class<?> type) {
+            return findVarHandle(lookup, lookup.lookupClass(), name, type);
+        }
+
+        public static VarHandle findVarHandle(MethodHandles.Lookup lookup,
+                                              Class<?> recv,
+                                              String name,
+                                              Class<?> type) {
+            try {
+                return lookup.findVarHandle(recv, name, type);
+            } catch (ReflectiveOperationException e) {
+                throw new InternalError(e);
+            }
+        }
+
+        public static MethodHandle findVirtual(MethodHandles.Lookup lookup,
+                                               Class<?> refc,
+                                               String name,
+                                               MethodType type) {
+            try {
+                return lookup.findVirtual(refc, name, type);
+            } catch (ReflectiveOperationException e) {
+                throw new InternalError(e);
+            }
         }
     }
 }

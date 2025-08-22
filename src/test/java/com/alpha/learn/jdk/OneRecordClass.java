@@ -1,4 +1,4 @@
-package com.alpha.learn.features;
+package com.alpha.learn.jdk;
 
 import java.util.Objects;
 

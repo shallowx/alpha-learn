@@ -1,6 +1,10 @@
+
 spring:
   application:
     name: ALPHA-LEARN
   output:
     ansi:
       enabled: always
+
+server:
+  port: 8080

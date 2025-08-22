@@ -1,4 +1,4 @@
-package com.alpha.learn.features;
+package com.alpha.learn.jdk;
 
 public sealed interface SealedClass permits OnSealedClass, SecondlySealedClass, FourthSealedClass{
 
