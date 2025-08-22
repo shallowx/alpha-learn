@@ -76,6 +76,8 @@ public class ClassTests {
         log.info("-----------spilt-----------");
         Class<?> cf2 = Class.forName("com.alpha.learn.jdk.ClassTests$TestSubClass");
         log.info("cf2: {}", cf2);
+
+        Class<?> cf3 = Class.forName("com.alpha.learn.jdk.ClassTests$TestSubClass");
     }
 
     @Setter
