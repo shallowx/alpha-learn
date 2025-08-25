@@ -57,7 +57,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -94,7 +93,9 @@
 					<basedir/>
 					<outputDirectory/>
 					<projectArtifact/>
-				</configuration>
+                    <mainOutputDirectory/>
+                    <mojoStatusPath/>
+                </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
