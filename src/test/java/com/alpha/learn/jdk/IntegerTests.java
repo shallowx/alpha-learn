@@ -23,6 +23,19 @@ public class IntegerTests {
     }
 
     @Test
+    public void testReturn() {
+        int x = 1;
+        x = x++;
+        log.info("x={}", x);
+
+        x= x + 1;
+        log.info("x={}", x);
+
+        x++;
+        log.info("x={}", x);
+    }
+
+    @Test
     public void testMinSubArrayLen() {
         int sum = sum(10);
         int[] array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
