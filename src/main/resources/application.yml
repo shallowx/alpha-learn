@@ -1,3 +1,5 @@
+server:
+  port: 8080
 
 spring:
   application:
@@ -5,6 +7,3 @@ spring:
   output:
     ansi:
       enabled: always
-
-server:
-  port: 8080

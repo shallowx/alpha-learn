@@ -111,4 +111,41 @@ public class IntegerTests {
         log.info("outcome: {}", Double.valueOf(5) / 2);
         log.info("outcome: {}", Float.valueOf(5) / 2);
     }
+
+    @Test
+    public void testSearch() {
+        int[] array = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        int index = search(array, 9);
+        log.info("index:{}", index);
+
+        int index2 = search2(array, index);
+        log.info("index2:{}", index2);
+    }
+
+    private int search(int[] array, int target) {
+        int index = -1;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == target) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+   private int search2(int[] array, int target) {
+        int index = -1;
+        int left = 0, right = array.length - 1;
+        retry: while (left < right) {
+            int mid = left + ((right - left) >> 1);
+            if (array[mid] == target) {
+                index = mid;
+                break retry;
+            } else if (array[mid] > target) {
+                right = mid - 1;
+            }  else {
+                left = mid + 1;
+            }
+        }
+        return index;
+   }
 }
