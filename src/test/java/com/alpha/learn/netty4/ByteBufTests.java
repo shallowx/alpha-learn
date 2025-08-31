@@ -162,4 +162,17 @@ public class ByteBufTests {
         log.info("buf new capacity is {}", byteBuf.capacity());
         byteBuf.release();
     }
+
+    @Test
+    public void testEmptyBuf() {
+        ByteBuf emptyBuf = Unpooled.EMPTY_BUFFER;
+        Assertions.assertEquals(1, emptyBuf.refCnt());
+        Assertions.assertEquals(0, emptyBuf.readerIndex());
+        Assertions.assertEquals(0, emptyBuf.writerIndex());
+        Assertions.assertEquals(0, emptyBuf.readableBytes());
+        Assertions.assertEquals(0, emptyBuf.capacity());
+        Assertions.assertFalse(emptyBuf.isReadable());
+        emptyBuf.release();
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> emptyBuf.writeByte(1));
+    }
 }
