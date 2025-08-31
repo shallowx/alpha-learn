@@ -28,7 +28,8 @@ public class HttpServer {
             b.group(group, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.DEBUG))
-                    .childHandler(new HttpServerInitializer());
+                    .childHandler(new HttpServerInitializer())
+                    .childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(1024, 1024 * 1024));
             ChannelFuture future = b.bind(8000).sync();
             future.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override

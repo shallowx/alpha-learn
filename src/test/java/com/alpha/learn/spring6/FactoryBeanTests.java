@@ -29,7 +29,7 @@ public class FactoryBeanTests {
 
     static class SimpleFactoryBean implements FactoryBean<TestFactoryBean> {
         private final TestEnum testEnum;
-        private Map<TestEnum, TestFactoryBean> map = new HashMap<>();
+        private final Map<TestEnum, TestFactoryBean> map = new HashMap<>();
 
         public SimpleFactoryBean(TestEnum testEnum) {
             this.testEnum = testEnum;
