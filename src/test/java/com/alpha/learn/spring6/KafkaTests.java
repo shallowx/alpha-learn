@@ -40,6 +40,13 @@ public class KafkaTests {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, "com.alpha.learn.spring6.TestPartitioner");
         props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, "com.alpha.learn.spring6.TestProducerInterceptor");
+        props.put(ProducerConfig.SEND_BUFFER_CONFIG, "65536");
+        props.put(ProducerConfig.RECEIVE_BUFFER_CONFIG, "65536");
+        props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, "1024");
+        props.put(ProducerConfig.LINGER_MS_CONFIG, "1");
+        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "lz4");
+        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "5");
+        props.put(ProducerConfig.ACKS_CONFIG, "all");
         CountDownLatch countDownLatch = new CountDownLatch(1);
         try(KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
             List<PartitionInfo> partitions = producer.partitionsFor(TEST_TOPIC);
@@ -47,7 +54,7 @@ public class KafkaTests {
 
             List<Header> topicHeaders = new ArrayList<>();
             topicHeaders.add(new RecordHeader("test_header", "jimmy".getBytes(StandardCharsets.UTF_8)));
-            ProducerRecord<String, String> record = new ProducerRecord<>(TEST_TOPIC, null, null, "hello", "world", topicHeaders);
+            ProducerRecord<String, String> record = new ProducerRecord<>(TEST_TOPIC, null, null, "key_for_", "world", topicHeaders);
             producer.send(record, new Callback() {
                 @Override
                 public void onCompletion(RecordMetadata metadata, Exception exception) {
@@ -71,14 +78,15 @@ public class KafkaTests {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "test_consumer");
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        Consumer<String, String> consumer = new KafkaConsumer<>(props);
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singleton(TEST_TOPIC), new ConsumerRebalanceListener() {
             @Override
             public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                consumer.commitSync();
                 log.info("Partitions: {}",  partitions);
             }
 
@@ -94,7 +102,34 @@ public class KafkaTests {
             ConsumerRecord<String, String> record = iterator.next();
             String key = record.key();
             String value = record.value();
+            consumer.commitSync();
             log.info("key: {}, value: {}", key, value);
+        }
+
+        for (int i = 0; i < 4; i++) {
+            new ConsumerThread(consumer).start();
+        }
+    }
+
+    static class ConsumerThread extends Thread {
+        private final KafkaConsumer<String, String> consumer;
+        public ConsumerThread(KafkaConsumer<String, String> consumer) {
+            this.consumer = consumer;
+            this.consumer.subscribe(Collections.singleton(TEST_TOPIC));
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1));
+                    for (ConsumerRecord<String, String> record : records) {
+                        log.info("key: {}, value: {}", record.key(), record.value());
+                    }
+                }
+            }finally {
+                consumer.close();
+            }
         }
     }
 }
