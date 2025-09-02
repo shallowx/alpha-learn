@@ -6,9 +6,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping
 public class OnlyForDebugGateway {
+
+    private static final List<byte[]> LEAK_LIST = new ArrayList<>();
 
     @GetMapping("/mock/{id}")
     public String test(HttpServletRequest request, @PathVariable String id) {
