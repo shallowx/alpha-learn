@@ -35,8 +35,8 @@ public class HandleChainTestServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
                             p.addLast(new FirstChannelOutboundHandler());
-                            p.addLast(new InboundForWriteTestingHandler());
                             p.addLast(new SecondChannelOutboundHandler());
+                            p.addLast(new InboundForWriteTestingHandler());
                             p.addLast(new ThreeChannelOutboundHandler());
                         }
                     });
@@ -73,6 +73,7 @@ public class HandleChainTestServer {
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             log.info("Server inbound channel active");
             ctx.writeAndFlush(buf); // ctx.channel().writeAndFlush(buf);
+            assert buf.refCnt() == 0;
         }
     }
 

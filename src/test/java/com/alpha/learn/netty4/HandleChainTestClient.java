@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
 @Slf4j
 public class HandleChainTestClient {
     public static void main(String[] args){
-        EventLoopGroup group = new MultiThreadIoEventLoopGroup(1, NioIoHandler.newFactory());
+        EventLoopGroup group = new MultiThreadIoEventLoopGroup(NettyRuntime.availableProcessors(), NioIoHandler.newFactory());
 
         try {
             Bootstrap bootstrap = new Bootstrap();

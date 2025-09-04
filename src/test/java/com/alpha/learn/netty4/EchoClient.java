@@ -8,6 +8,7 @@ import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.CharsetUtil;
+import io.netty.util.NettyRuntime;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -16,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class EchoClient {
 
     public static void main(String[] args) throws InterruptedException {
-        EventLoopGroup group = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
+        EventLoopGroup group = new MultiThreadIoEventLoopGroup(NettyRuntime.availableProcessors(), NioIoHandler.newFactory());
         try {
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group)

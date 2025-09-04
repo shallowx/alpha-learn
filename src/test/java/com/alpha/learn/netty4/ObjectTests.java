@@ -1,9 +1,7 @@
 package com.alpha.learn.netty4;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.util.AbstractReferenceCounted;
-import io.netty.util.Recycler;
-import io.netty.util.ReferenceCounted;
+import io.netty.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,11 +32,17 @@ public class ObjectTests {
         private String name;
         private ByteBuf buf;
 
+        private static final ResourceLeakDetector<NettyObjects> leakDetector =
+                ResourceLeakDetectorFactory.instance().newResourceLeakDetector(NettyObjects.class);
+
+        private static ResourceLeakTracker<NettyObjects> tracker;
+
         public static NettyObjects newInstance(String name, ByteBuf buf) {
             NettyObjects poolObject = recycler.get();
             poolObject.setRefCnt(1);
             poolObject.name = name;
             poolObject.buf = buf;
+            tracker = leakDetector.track(poolObject);
             return poolObject;
         }
 
@@ -52,6 +56,7 @@ public class ObjectTests {
                 this.buf.release();
                 this.buf = null;
             }
+            tracker.close(this);
             handle.recycle(this);
         }
 
