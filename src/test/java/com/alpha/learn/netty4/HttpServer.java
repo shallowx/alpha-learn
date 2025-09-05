@@ -20,7 +20,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 @Slf4j
 public class HttpServer {
     public static void main(String[] args) {
-        EventLoopGroup group = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
+        EventLoopGroup group = new MultiThreadIoEventLoopGroup(1, NioIoHandler.newFactory());
         EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
         try {
             ServerBootstrap b = new ServerBootstrap();
