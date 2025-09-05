@@ -13,8 +13,6 @@ import java.util.List;
 @RequestMapping
 public class OnlyForDebugGateway {
 
-    private static final List<byte[]> LEAK_LIST = new ArrayList<>();
-
     @GetMapping("/mock/{id}")
     public String test(HttpServletRequest request, @PathVariable String id) {
         String header = request.getHeader("Gateway-Request");

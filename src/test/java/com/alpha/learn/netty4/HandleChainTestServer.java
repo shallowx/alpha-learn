@@ -12,6 +12,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.internal.PlatformDependent;
 import lombok.extern.slf4j.Slf4j;
 import java.net.InetSocketAddress;
 
@@ -30,6 +31,7 @@ public class HandleChainTestServer {
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.TRACE))
                     .childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, mark)
+                    .childOption(ChannelOption.AUTO_READ, true)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
@@ -80,7 +82,7 @@ public class HandleChainTestServer {
     static class FirstChannelOutboundHandler extends ChannelOutboundHandlerAdapter {
         @Override
         public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-            log.info("First...");
+            log.info("First... {}", PlatformDependent.usedDirectMemory());
             super.write(ctx, msg, promise);
         }
     }
