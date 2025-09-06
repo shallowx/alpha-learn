@@ -1,0 +1,2 @@
+org.springframework.boot.SpringApplicationRunListener=\
+com.alpha.learn.more.FirstSpringBootListener
