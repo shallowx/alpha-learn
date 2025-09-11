@@ -16,11 +16,25 @@
  */
 package com.alpha.learn.jdk25;
 
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
+
+@SuppressWarnings("ALL")
+@Slf4j
+final class ForTesting {
+    @Test
+    public void test() {
+        Time time = Time.SYSTEM;
+        log.info("time is {}", time);
+        log.info("time is {}", time.milliseconds());
+    }
+}
 
 public interface Time {
 
@@ -74,7 +88,7 @@ public interface Time {
 
         @Override
         public void waitObject(Object obj, Supplier<Boolean> condition, long deadlineMs) throws InterruptedException {
-            synchronized (obj) {
+            synchronized (this) {
                 while (true) {
                     if (condition.get())
                         return;
