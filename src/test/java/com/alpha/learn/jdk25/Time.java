@@ -18,7 +18,6 @@ package com.alpha.learn.jdk25;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
