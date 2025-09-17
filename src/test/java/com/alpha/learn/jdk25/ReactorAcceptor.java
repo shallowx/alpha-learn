@@ -1,5 +1,7 @@
 package com.alpha.learn.jdk25;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ClosedChannelException;
@@ -7,6 +9,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 @SuppressWarnings("ALL")
 public class ReactorAcceptor implements Runnable {
     private final ServerSocketChannel serverChannel;
@@ -28,7 +31,7 @@ public class ReactorAcceptor implements Runnable {
                 sc.configureBlocking(false);
                 ReactorWorker worker = nextWorker();
                 worker.registerChannel(sc);
-                System.out.printf("[Acceptor] Accepted %s and handed to %s%n", sc.getRemoteAddress(), worker.getName());
+                log.info("[Acceptor] Accepted {} and handed to {}", sc.getRemoteAddress(), worker.getName());
             } catch (ClosedChannelException cce) {
                 System.out.println("[Acceptor] Server channel closed");
             } catch (IOException e) {
